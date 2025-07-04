@@ -45,7 +45,7 @@ const HomePage = () => {
                         </span>
                     </h1>
 
-                    <p className="mt-8 text-2xl md:text-3xl text-gray-700 font-medium max-w-5xl mx-auto leading-relaxed">
+                    <p className="mt-8 text-xl md:text-2xl text-gray-700 font-medium max-w-5xl mx-auto leading-relaxed">
                         Transform any PDF into an intelligent conversation. From research papers to legal documents,
                         <span className="text-blue-600 font-bold"> AnalyzeAI</span> brings your documents to life with instant
                         insights and revolutionary AI-powered analysis.
