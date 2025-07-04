@@ -26,7 +26,7 @@ const HomePage = () => {
             {/* HERO SECTION */}
             <section className="relative overflow-hidden bg-gradient-to-br from-blue-100 via-white to-indigo-100">
                 {/* Decorative Elements */}
-                <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-60 animate-pulse"></div>
+                <div className="absolute top-20  left-10 w-20 h-20 bg-blue-200 rounded-full opacity-60 animate-pulse"></div>
                 <div className="absolute top-40 right-20 w-16 h-16 bg-indigo-200 rounded-full opacity-40 animate-bounce"></div>
                 <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-purple-200 rounded-full opacity-50"></div>
                 <div className="absolute top-1/3 right-1/3 w-8 h-8 bg-blue-300 rounded-full opacity-30 animate-pulse"></div>
@@ -127,9 +127,9 @@ const HomePage = () => {
                                 alt="user5"
                             />
                         </div>
-                         <p className="text-gray-700 font-medium text-sm sm:text-base">
-                        Loved by millions of happy users!
-                    </p>
+                        <p className="text-gray-700 font-medium text-sm sm:text-base">
+                            Loved by millions of happy users!
+                        </p>
                     </div>
                 </div>
             </section>
@@ -308,7 +308,7 @@ const HomePage = () => {
                                 desc: "Scientific papers, data analysis, insights",
                                 color: "from-cyan-500 to-blue-500",
                                 bgColor: "bg-cyan-50",
-                            },
+                            },  
                         ].map((agent, i) => (
                             <div
                                 key={i}
@@ -350,21 +350,21 @@ const HomePage = () => {
                         {[
                             {
                                 quote:
-                                    "AnalyzeAI completely transformed how I handle legal documents. What used to take hours now takes minutes. The accuracy and source referencing is absolutely incredible.",
-                                author: "Sarah Chen",
+                                    "Querra completely transformed how I handle legal documents. What used to take hours now takes minutes. The accuracy and source referencing is absolutely incredible.",
+                                author: "Rajat Sharma",
                                 role: "Corporate Lawyer",
                                 company: "Goldman & Associates",
                                 rating: 5,
-                                avatar: "SC",
+                                avatar: "RS",
                             },
                             {
                                 quote:
                                     "As a researcher analyzing dozens of papers weekly, this tool has become absolutely indispensable. The AI insights are remarkably accurate and save me countless hours.",
-                                author: "Dr. Michael Rodriguez",
+                                author: "Dr. Isha Thakur",
                                 role: "Research Scientist",
-                                company: "Stanford University",
+                                company: "Kalda Specialist Group",
                                 rating: 5,
-                                avatar: "MR",
+                                avatar: "IT",
                             },
                         ].map((testimonial, i) => (
                             <div
@@ -387,7 +387,7 @@ const HomePage = () => {
                                     <div>
                                         <div className="text-gray-900 font-bold text-lg">{testimonial.author}</div>
                                         <div className="text-gray-600 font-medium">{testimonial.role}</div>
-                                        <div className="text-gray-500 text-sm">{testimonial.company}</div>
+                                        <div className="text-gray-500 text-[12px] mt-[-4px]">{testimonial.company}</div>
                                     </div>
                                 </div>
                             </div>
