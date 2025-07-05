@@ -20,12 +20,45 @@ import {
   AlertTriangle,
 } from "lucide-react"
 import Link from "next/link"
+import { askLLM } from "../../../utils/askLLM";
 
 const UploadPage = () => {
+
+  const handleChat = async (userText) => {
+    try {
+      const response = await askLLM(userText);
+
+      // ✅ Extract the AI reply string
+      const reply = response?.choices?.[0]?.message?.content;
+
+      if (reply) {
+        setLlmResponse(reply);
+      } else {
+        setLlmResponse("AI didn't return a valid response.");
+      }
+    } catch (err) {
+      console.error("LLM Error:", err);
+      setLlmResponse("Failed to get a response from AI.");
+    }
+  };
+
+
+  const handleLLMQuery = async (extractedText) => {
+    if (!question.trim()) return;
+    const answer = await askLLM(extractedText, question);
+    setLlmAnswer(answer);
+  };
+
+  const [llmResponse, setLlmResponse] = useState("")
   const [files, setFiles] = useState([])
   const [isDragOver, setIsDragOver] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef(null)
+  const [selectedFileId, setSelectedFileId] = useState(null);
+  const [question, setQuestion] = useState("");
+  const [llmAnswer, setLlmAnswer] = useState("");
+
+
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault()
@@ -63,6 +96,7 @@ const UploadPage = () => {
       id: Math.random().toString(36).substr(2, 9),
       status: "uploading",
       progress: 0,
+      extractedText: "",
     }))
 
     setFiles((prev) => [...prev, ...newFiles])
@@ -74,6 +108,12 @@ const UploadPage = () => {
       try {
         const text = await readPdfText(uploadedFile.file)
         console.log(`Extracted text for ${uploadedFile.file.name}:`, text)
+        setFiles((prev) =>
+          prev.map((file) =>
+            file.id === uploadedFile.id
+              ? { ...file, extractedText: text }
+              : file
+          ))
       } catch (error) {
         console.error(`Failed to extract text for ${uploadedFile.file.name}:`, error)
       }
@@ -93,7 +133,6 @@ const UploadPage = () => {
       reader.onload = function (e) {
         const arrayBuffer = e.target.result;
 
-        // ✅ Log the raw PDF data (can be used to send to backend)
         console.log("📦 PDF ArrayBuffer ready for processing:", arrayBuffer);
       };
 
@@ -271,12 +310,14 @@ const UploadPage = () => {
                   <FileText className="h-6 w-6 text-blue-600" />
                   Uploaded Files ({files.length})
                 </h3>
-
-                <div className="space-y-4">
+                <div className="space-y-4"
+                >
                   {files.map((uploadedFile) => (
                     <div
+                      onClick={() => setSelectedFileId(uploadedFile.id)}
                       key={uploadedFile.id}
-                      className="bg-white border-2 border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300"
+                      className={`bg-white border-2 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 ${uploadedFile.id === selectedFileId ? "border-blue-500 shadow-xl" : "border-gray-200"
+                        }`}
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-4">
@@ -289,12 +330,14 @@ const UploadPage = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3"
+                        >
                           {uploadedFile.status === "uploading" && (
                             <div className="flex items-center gap-2 text-blue-600">
                               <Clock className="h-4 w-4 animate-spin" />
                               <span className="text-sm font-medium">Uploading...</span>
                             </div>
+
                           )}
                           {uploadedFile.status === "success" && (
                             <div className="flex items-center gap-2 text-green-600">
@@ -302,6 +345,39 @@ const UploadPage = () => {
                               <span className="text-sm font-medium">Complete</span>
                             </div>
                           )}
+                          <button
+                            onClick={() => handleChat(uploadedFile.id)}
+                            className="mt-2 bg-blue-600 text-black px-4 py-2 rounded hover:bg-blue-700"
+                          >
+                            Chat with this PDF
+                          </button>
+
+
+                          {selectedFileId === uploadedFile.id && (
+                            <div className="mt-6 w-full">
+                              <input
+                                type="text"
+                                value={question}
+                                onChange={(e) => setQuestion(e.target.value)}
+                                placeholder="Ask a question about this PDF"
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+                              />
+                              <button
+                                onClick={() => handleLLMQuery(uploadedFile.extractedText)}
+                                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-md transition duration-300"
+                              >
+                                Ask AI
+                              </button>
+
+                              {llmAnswer && (
+                                <div className="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-5 rounded-xl shadow-inner">
+                                  <h4 className="text-lg font-semibold text-yellow-800 mb-2">AI Answer:</h4>
+                                  <p className="text-gray-700 whitespace-pre-line">{llmAnswer}</p>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
                           {uploadedFile.status === "error" && (
                             <div className="flex items-center gap-2 text-red-600">
                               <AlertCircle className="h-5 w-5" />
@@ -331,6 +407,25 @@ const UploadPage = () => {
                     </div>
 
                   ))}
+
+
+                  {selectedFileId && (
+                    <div className="mt-12 bg-white border border-gray-200 rounded-3xl p-8">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">Extracted Text</h3>
+                      <div className="max-h-96 overflow-y-auto text-sm text-gray-700">
+                        {files
+                          .filter((file) => file.id === selectedFileId && file.extractedText)
+                          .map((file) => (
+                            <div key={file.id}>
+                              <h4 className="font-semibold mb-2">{file.file.name}</h4>
+                              <pre className="whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border">{file.extractedText}</pre>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+
                   {files.some((f) => f.status === "success") && (
                     <div className="mt-16 text-center">
                       <div className="bg-white border-2 border-gray-200 rounded-3xl p-8 max-w-2xl mx-auto">
