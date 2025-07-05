@@ -1,3 +1,4 @@
+"use client"
 import {
     Brain,
     Upload,
@@ -18,9 +19,11 @@ import {
     CheckCircle,
     Globe,
     Award,
-} from "lucide-react"
+} from "lucide-react";
+import { useRouter } from 'next/navigation'
 
 const HomePage = () => {
+    const router = useRouter()
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
             {/* HERO SECTION */}
@@ -52,7 +55,8 @@ const HomePage = () => {
                     </p>
 
                     <div className="mt-16 flex justify-center gap-8 flex-wrap">
-                        <button className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xl px-12 py-5 rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 flex items-center gap-3 transform hover:scale-105">
+                        <button className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xl px-12 py-5 rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 flex items-center gap-3 transform hover:scale-105"
+                            onClick={() => router.push('/upload')}>
                             <Brain className="h-6 w-6" />
                             Start Analyzing Now
                             <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
@@ -63,41 +67,6 @@ const HomePage = () => {
                         </button>
                     </div>
 
-                    {/* Enhanced Social Proof */}
-                    {/* <div className="mt-20 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-200 max-w-4xl mx-auto">
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
-                            
-                            <div className="flex -space-x-4">
-                                
-                                {[1, 2, 3, 4, 5, 6].map((id) => (
-                                    <div
-                                        key={id}
-                                        className="w-16 h-16 rounded-full border-4 border-white bg-gradient-to-r from-blue-400 to-indigo-400 flex items-center justify-center text-white font-bold text-lg shadow-lg"
-                                    >
-                                        {String.fromCharCode(65 + id)}
-                                      
-                                    </div>
-                                    
-                                ))}
-                            </div>
-                            <div className="text-center sm:text-left">
-                                <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                                    <div className="flex text-yellow-500">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <Star key={star} className="h-6 w-6 fill-current" />
-                                            
-                                        ))}
-                                        
-                                    </div>
-                                    <span className="text-gray-600 font-semibold">4.9/5</span>
-                                </div>
-                                <p className="text-gray-700 font-semibold text-lg">
-                                    Trusted by <span className="text-blue-600">50,000+</span> professionals worldwide
-                                </p>
-                                <p className="text-gray-500">Join the AI revolution in document analysis</p>
-                            </div>
-                        </div>
-                    </div> */}
                     <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
                         {/* Avatars */}
                         <div className="flex -space-x-3">
@@ -308,7 +277,7 @@ const HomePage = () => {
                                 desc: "Scientific papers, data analysis, insights",
                                 color: "from-cyan-500 to-blue-500",
                                 bgColor: "bg-cyan-50",
-                            },  
+                            },
                         ].map((agent, i) => (
                             <div
                                 key={i}
@@ -409,7 +378,8 @@ const HomePage = () => {
                     </p>
 
                     <div className="flex justify-center gap-8 flex-wrap mb-12">
-                        <button className="group bg-white text-blue-600 text-xl px-12 py-5 rounded-2xl shadow-2xl hover:shadow-white/25 transition-all duration-300 flex items-center gap-4 font-bold transform hover:scale-105">
+                        <button className="group bg-white text-blue-600 text-xl px-12 py-5 rounded-2xl shadow-2xl hover:shadow-white/25 transition-all duration-300 flex items-center gap-4 font-bold transform hover:scale-105" 
+                         onClick={() => router.push('/upload')}>
                             <Brain className="h-7 w-7" />
                             Start Free Trial
                             <ArrowRight className="h-6 w-6 group-hover:translate-x-2 transition-transform" />

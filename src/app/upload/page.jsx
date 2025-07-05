@@ -1,17 +1,9 @@
 "use client"
 
 import { useState, useRef, useCallback } from "react"
-// import * as pdfjsLib from "pdfjs-dist/build/pdf";
-// import { readPdfText } from '@/utils/readPdfText';
 import { readPdfText } from "../../../utils/readPdfText";
-// import { readPdfText } from "../../../utils/readPdfText";
-// import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker.entry';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
-
-
-
-// import pdfjsWorker from "pdfjs-dist/build/pdf.worker.entry";
 import {
   Upload,
   FileText,
@@ -28,7 +20,6 @@ import {
   AlertTriangle,
 } from "lucide-react"
 import Link from "next/link"
-// import { log } from "console";
 
 const UploadPage = () => {
   const [files, setFiles] = useState([])
@@ -64,7 +55,6 @@ const UploadPage = () => {
     const pdfFiles = fileList.filter((file) => file.type === "application/pdf")
 
     if (pdfFiles.length !== fileList.length) {
-      // Show error for non-PDF files
       alert("Please upload only PDF files")
     }
 
@@ -77,16 +67,15 @@ const UploadPage = () => {
 
     setFiles((prev) => [...prev, ...newFiles])
 
-    // Simulate upload process
     for (const uploadedFile of newFiles) {
       simulateUpload(uploadedFile.id)
 
-      // 🔍 Extract text from each uploaded file
+
       try {
         const text = await readPdfText(uploadedFile.file)
-        console.log(`✅ Extracted text for ${uploadedFile.file.name}:`, text)
+        console.log(`Extracted text for ${uploadedFile.file.name}:`, text)
       } catch (error) {
-        console.error(`❌ Failed to extract text for ${uploadedFile.file.name}:`, error)
+        console.error(`Failed to extract text for ${uploadedFile.file.name}:`, error)
       }
     }
 
@@ -109,7 +98,7 @@ const UploadPage = () => {
       };
 
       reader.onerror = function (err) {
-        console.error("❌ Error reading PDF file:", err);
+        console.error("Error reading PDF file:", err);
       };
 
       reader.readAsArrayBuffer(file);
