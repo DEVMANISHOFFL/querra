@@ -26,28 +26,66 @@ const UploadPage = () => {
 
   const handleChat = async (userText) => {
     try {
-      const response = await askLLM(userText);
+      const newMessages = [
+        ...messages,
+        { role: "user", content: userText }
+      ];
 
-      // ✅ Extract the AI reply string
+      setMessages(newMessages);
+
+      const response = await askLLM(newMessages);
+
+
       const reply = response?.choices?.[0]?.message?.content;
 
-      if (reply) {
-        setLlmResponse(reply);
+      if (typeof reply === "string" && reply.trim().length > 0) {
+        setLlmResponse(reply.trim());
       } else {
-        setLlmResponse("AI didn't return a valid response.");
+        console.warn("AI reply was invalid:", response);
+        setLlmResponse("⚠️ AI returned an empty or invalid response.");
       }
     } catch (err) {
       console.error("LLM Error:", err);
-      setLlmResponse("Failed to get a response from AI.");
+      setLlmResponse("❌ Failed to get a response from AI.");
     }
   };
 
 
+
   const handleLLMQuery = async (extractedText) => {
     if (!question.trim()) return;
-    const answer = await askLLM(extractedText, question);
-    setLlmAnswer(answer);
+
+    const userMessage = {
+      role: "user",
+      content: `${question}\n\nHere is some reference from the document:\n${extractedText}`,
+    };
+
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+
+    try {
+      const response = await askLLM(newMessages);
+      const reply = response?.choices?.[0]?.message?.content;
+
+      if (reply) {
+        const assistantMessage = {
+          role: "assistant",
+          content: reply,
+        };
+        setMessages([...newMessages, assistantMessage]);
+        setLlmAnswer(reply);
+      } else if (response?.error) {
+        setLlmAnswer("AI Error: " + JSON.stringify(response.error, null, 2));
+      } else {
+        setLlmAnswer("AI didn't return a valid response.");
+      }
+    } catch (err) {
+      console.error("LLM Error:", err);
+      setLlmAnswer("Something went wrong while querying the AI.");
+    }
   };
+
+
 
   const [llmResponse, setLlmResponse] = useState("")
   const [files, setFiles] = useState([])
@@ -57,6 +95,10 @@ const UploadPage = () => {
   const [selectedFileId, setSelectedFileId] = useState(null);
   const [question, setQuestion] = useState("");
   const [llmAnswer, setLlmAnswer] = useState("");
+  const [messages, setMessages] = useState([
+    { role: "system", content: "You are a helpful assistant." },
+  ]);
+
 
 
 
@@ -347,36 +389,13 @@ const UploadPage = () => {
                           )}
                           <button
                             onClick={() => handleChat(uploadedFile.id)}
-                            className="mt-2 bg-blue-600 text-black px-4 py-2 rounded hover:bg-blue-700"
+                            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                           >
-                            Chat with this PDF
+                            Chat
                           </button>
 
 
-                          {selectedFileId === uploadedFile.id && (
-                            <div className="mt-6 w-full">
-                              <input
-                                type="text"
-                                value={question}
-                                onChange={(e) => setQuestion(e.target.value)}
-                                placeholder="Ask a question about this PDF"
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-                              />
-                              <button
-                                onClick={() => handleLLMQuery(uploadedFile.extractedText)}
-                                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-md transition duration-300"
-                              >
-                                Ask AI
-                              </button>
 
-                              {llmAnswer && (
-                                <div className="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-5 rounded-xl shadow-inner">
-                                  <h4 className="text-lg font-semibold text-yellow-800 mb-2">AI Answer:</h4>
-                                  <p className="text-gray-700 whitespace-pre-line">{llmAnswer}</p>
-                                </div>
-                              )}
-                            </div>
-                          )}
 
                           {uploadedFile.status === "error" && (
                             <div className="flex items-center gap-2 text-red-600">
@@ -403,12 +422,36 @@ const UploadPage = () => {
                           ></div>
                         </div>
                       )}
+                      {selectedFileId === uploadedFile.id && (
+                        <div className="mt-6 w-full">
+                          <input
+                            type="text"
+                            value={question}
+                            onChange={(e) => setQuestion(e.target.value)}
+                            placeholder="Ask a question about this PDF"
+                            className="w-full p-3 border-black text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+                          />
+                          <button
+                            onClick={() => handleLLMQuery(uploadedFile.extractedText)}
+                            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-md transition duration-300"
+                          >
+                            Ask AI
+                          </button>
+
+
+                        </div>
+                      )}
 
                     </div>
 
                   ))}
 
-
+                  {llmAnswer && (
+                    <div className="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-5 rounded-xl shadow-inner">
+                      <h4 className="text-lg font-semibold text-yellow-800 mb-2">AI Answer:</h4>
+                      <p className="text-gray-700 whitespace-pre-line">{llmAnswer}</p>
+                    </div>
+                  )}
                   {selectedFileId && (
                     <div className="mt-12 bg-white border border-gray-200 rounded-3xl p-8">
                       <h3 className="text-2xl font-bold text-gray-900 mb-4">Extracted Text</h3>
@@ -417,7 +460,7 @@ const UploadPage = () => {
                           .filter((file) => file.id === selectedFileId && file.extractedText)
                           .map((file) => (
                             <div key={file.id}>
-                              <h4 className="font-semibold mb-2">{file.file.name}</h4>
+                              <h4 className="font-semibold mb-2">{file.name}</h4>
                               <pre className="whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border">{file.extractedText}</pre>
                             </div>
                           ))}
