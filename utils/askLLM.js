@@ -1,13 +1,15 @@
 export const askLLM = async (context, question) => {
-    // Format context safely
-    const formattedContext = typeof context === "string"
-        ? context
-        : JSON.stringify(context, null, 2);
+    // Handle empty or undefined context safely
+    const formattedContext = context
+        ? typeof context === "string"
+            ? context
+            : JSON.stringify(context, null, 2)
+        : "No document content provided.";
 
-    // Trim large context to prevent token overflow
-    const trimmedContext = formattedContext.length > 4000
-        ? formattedContext.slice(0, 4000)
-        : formattedContext;
+    const trimmedContext =
+        formattedContext.length > 4000
+            ? formattedContext.slice(0, 4000)
+            : formattedContext;
 
     const messages = [
         {

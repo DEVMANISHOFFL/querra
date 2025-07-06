@@ -96,11 +96,14 @@ const UploadPage = () => {
   const [question, setQuestion] = useState("");
   const [llmAnswer, setLlmAnswer] = useState("");
   const [messages, setMessages] = useState([
-    { role: "system", content: "You are a helpful assistant." },
+    { role: "system", content: "You are a helpful assistant. Answer based on the following document." },
   ]);
 
-
-
+  const handleAsk = async () => {
+    const { answer, updatedMessages } = await askLLM(messages, extractedText, question);
+    setMessages(updatedMessages);
+    setLlmAnswer(answer);
+  };
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault()
@@ -293,6 +296,7 @@ const UploadPage = () => {
           {/* Upload Zone */}
           <div className="lg:col-span-2">
             <div
+              onClick={() => fileInputRef.current?.click()}
               className={`relative border-3 border-dashed rounded-3xl p-12 text-center transition-all duration-300 ${isDragOver
                 ? "border-blue-500 bg-blue-50 scale-105"
                 : "border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50"
