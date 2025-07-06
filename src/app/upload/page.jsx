@@ -42,11 +42,11 @@ const UploadPage = () => {
         setLlmResponse(reply.trim());
       } else {
         console.warn("AI reply was invalid:", response);
-        setLlmResponse("⚠️ AI returned an empty or invalid response.");
+        setLlmResponse("AI returned an empty or invalid response.");
       }
     } catch (err) {
       console.error("LLM Error:", err);
-      setLlmResponse("❌ Failed to get a response from AI.");
+      setLlmResponse("Failed to get a response from AI.");
     }
   };
 

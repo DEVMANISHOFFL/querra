@@ -1,5 +1,4 @@
 export const askLLM = async (context, question) => {
-    // Handle empty or undefined context safely
     const formattedContext = context
         ? typeof context === "string"
             ? context

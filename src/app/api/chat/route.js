@@ -12,7 +12,7 @@ export async function POST(req) {
             },
             body: JSON.stringify({
                 model: "mistralai/mistral-small-3.1-24b-instruct:free",
-                messages: messages, // 👈 pass full conversation
+                messages: messages, 
             }),
         });
 
