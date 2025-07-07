@@ -1,3 +1,5 @@
+// src/app/api/chat/route.js
+
 export async function POST(req) {
     try {
         const body = await req.json();
@@ -12,7 +14,7 @@ export async function POST(req) {
             },
             body: JSON.stringify({
                 model: "mistralai/mistral-small-3.1-24b-instruct:free",
-                messages: messages, 
+                messages,
             }),
         });
 
@@ -29,3 +31,6 @@ export async function POST(req) {
         });
     }
 }
+
+// ✅ Optional: ensures this file is treated as a module
+export const config = {};
