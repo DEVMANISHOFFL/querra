@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export', // ✅ Static HTML export (important for Netlify)
-  trailingSlash: true, // ✅ Ensures Netlify routing works
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -14,4 +12,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
