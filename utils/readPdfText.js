@@ -1,24 +1,26 @@
 export async function readPdfText(file) {
-  // ✅ Ensure this runs only in the browser
   if (typeof window === "undefined") {
-    console.warn("readPdfText called on server — exiting early");
+    console.warn("readPdfText called on server — exiting");
     return "";
   }
-
-  // ✅ Dynamically import browser-compatible build
-  const pdfjsLib = await import("pdfjs-dist/webpack");
 
   const reader = new FileReader();
 
   return new Promise((resolve, reject) => {
     reader.onload = async function (e) {
       const typedArray = new Uint8Array(e.target.result);
-      try {
-        const pdfjsLib = await import('pdfjs-dist/build/pdf');
-        const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.entry');
-        const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
-        let fullText = "";
 
+      try {
+        // ✅ Use browser-compatible webpack entry
+        const pdfjsLib = await import("pdfjs-dist/webpack");
+        const workerSrc = await import("pdfjs-dist/build/pdf.worker.entry");
+
+        // Set the worker source
+        pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
+
+        const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
+
+        let fullText = "";
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
@@ -32,10 +34,7 @@ export async function readPdfText(file) {
       }
     };
 
-    reader.onerror = function (err) {
-      reject(err);
-    };
-
+    reader.onerror = reject;
     reader.readAsArrayBuffer(file);
   });
 }
