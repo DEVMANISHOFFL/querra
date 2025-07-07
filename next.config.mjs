@@ -1,7 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+// const { withNetlify } = require('@netlify/next');
+const {withNetlify} = require('@netlify/next')
+
+module.exports = withNetlify({
   typescript: {
-    // ✅ Prevent Next.js from type-checking during build
     ignoreBuildErrors: true,
   },
   webpack(config) {
@@ -12,6 +13,4 @@ const nextConfig = {
 
     return config;
   },
-};
-
-export default nextConfig;
+});
