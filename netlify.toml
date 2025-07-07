@@ -5,3 +5,7 @@
 [build.environment]
   OPENROUTER_API_KEY = "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"
 
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
