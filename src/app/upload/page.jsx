@@ -2,8 +2,8 @@
 
 import { useState, useRef, useCallback } from "react"
 import { readPdfText } from "../../../utils/readPdfText";
-import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker.entry';
-import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
+// import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker.entry';
+// import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 import {
   Upload,
   FileText,
@@ -130,6 +130,8 @@ const UploadPage = () => {
   }, [])
 
   const handleFiles = async (fileList) => {
+    const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
+    const pdfjsWorker = await import("pdfjs-dist/legacy/build/pdf.worker.entry");
     const pdfFiles = fileList.filter((file) => file.type === "application/pdf")
 
     if (pdfFiles.length !== fileList.length) {
@@ -613,5 +615,37 @@ const UploadPage = () => {
     </div>
   )
 }
+
+const extractTextFromPDF = async (file, pdfjsLib) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = async function (e) {
+      try {
+        const typedArray = new Uint8Array(e.target.result);
+        const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
+        let fullText = "";
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          const strings = content.items.map((item) => item.str).join(" ");
+          fullText += strings + "\n";
+        }
+
+        resolve(fullText);
+      } catch (err) {
+        reject(err);
+      }
+    };
+
+    reader.onerror = function (err) {
+      reject(err);
+    };
+
+    reader.readAsArrayBuffer(file);
+  });
+};
+
 
 export default UploadPage
