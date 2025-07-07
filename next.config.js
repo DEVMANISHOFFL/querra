@@ -1,7 +1,6 @@
-// const { withNetlify } = require('@netlify/next');
-const {withNetlify} = require('@netlify/next')
-
-module.exports = withNetlify({
+// ✅ next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -10,7 +9,8 @@ module.exports = withNetlify({
       test: /pdf\.worker\.js$/,
       type: 'asset/resource',
     });
-
     return config;
   },
-});
+};
+
+module.exports = nextConfig;
