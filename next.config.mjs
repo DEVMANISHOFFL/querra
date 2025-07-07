@@ -1,9 +1,7 @@
-/** @type {import('next').NextConfig} */
+const { withNetlify } = require('@netlify/next');
+
 const nextConfig = {
-  typescript: {
-    // ✅ Prevent Next.js from type-checking during build
-    ignoreBuildErrors: true,
-  },
+  // Your existing config here
   webpack(config) {
     config.module.rules.push({
       test: /pdf\.worker\.js$/,
@@ -14,4 +12,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = withNetlify(nextConfig);
