@@ -14,6 +14,8 @@ export async function readPdfText(file) {
     reader.onload = async function (e) {
       const typedArray = new Uint8Array(e.target.result);
       try {
+        const pdfjsLib = await import('pdfjs-dist/build/pdf');
+        const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.entry');
         const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
         let fullText = "";
 

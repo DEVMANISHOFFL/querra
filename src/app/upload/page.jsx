@@ -130,8 +130,8 @@ const UploadPage = () => {
   }, [])
 
   const handleFiles = async (fileList) => {
-    const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
-    const pdfjsWorker = await import("pdfjs-dist/legacy/build/pdf.worker.entry");
+    // const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
+    // const pdfjsWorker = await import("pdfjs-dist/legacy/build/pdf.worker.entry");
     const pdfFiles = fileList.filter((file) => file.type === "application/pdf")
 
     if (pdfFiles.length !== fileList.length) {
