@@ -18,6 +18,10 @@ export async function handler(event) {
             }),
         });
 
+        console.log("🔐 OPENROUTER_API_KEY:", process.env.OPENROUTER_API_KEY);
+        console.log("🔐 OPENROUTER_API_KEY:", process.env.OPENROUTER_API_KEY);
+        console.log("🔐 OPENROUTER_API_KEY:", process.env.OPENROUTER_API_KEY);
+
         const data = await response.json();
 
         return {
