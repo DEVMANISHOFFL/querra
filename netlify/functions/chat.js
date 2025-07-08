@@ -1,8 +1,8 @@
-// src/app/api/chat/route.js
+// netlify/functions/chat.js
 
-export async function POST(req) {
+export async function handler(event) {
     try {
-        const body = await req.json();
+        const body = JSON.parse(event.body);
         const messages = body.messages;
 
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -10,7 +10,7 @@ export async function POST(req) {
             headers: {
                 Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
                 "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost:3000",
+                "HTTP-Referer": "https://eloquent-macaron-1dceff.netlify.app", // replace localhost
             },
             body: JSON.stringify({
                 model: "mistralai/mistral-small-3.1-24b-instruct:free",
@@ -19,18 +19,17 @@ export async function POST(req) {
         });
 
         const data = await response.json();
-        return new Response(JSON.stringify(data), {
-            status: 200,
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
-        });
+        };
     } catch (err) {
-        console.error("AI error:", err);
-        return new Response(JSON.stringify({ error: "OpenRouter failed." }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-        });
+        console.error("Netlify Function error:", err);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: "OpenRouter failed." }),
+        };
     }
 }
-
-// ✅ Optional: ensures this file is treated as a module
-export const config = {};
