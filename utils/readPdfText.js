@@ -11,12 +11,10 @@ export async function readPdfText(file) {
       const typedArray = new Uint8Array(e.target.result);
 
       try {
-        // ✅ Use browser-compatible webpack entry
-        const pdfjsLib = await import("pdfjs-dist/webpack");
-        const workerSrc = await import("pdfjs-dist/build/pdf.worker.entry");
+        const pdfjsLib = await import("pdfjs-dist");
 
-        // Set the worker source
-        pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
+        // ✅ Point to the static worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
 
         const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
 
