@@ -21,7 +21,7 @@ export const askLLM = async (context, question) => {
         },
     ];
 
-    const res = await fetch("/api/chat", {
+    const res = await fetch("/.netlify/functions/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages }),
