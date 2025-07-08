@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         {/* Favicon */}
-        <link rel="icon" href="/Screenshot 2025-07-08 105854.png" />
+        <link rel="icon" href="../../../favicon.png" />
         {/* Optional: mobile/meta */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#ffffff" />
