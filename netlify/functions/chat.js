@@ -7,7 +7,7 @@ export async function handler(event) {
 
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
-            headers: {
+            headers: {  
                 Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
                 "Content-Type": "application/json",
                 "HTTP-Referer": "https://eloquent-macaron-1dceff.netlify.app", // replace localhost
